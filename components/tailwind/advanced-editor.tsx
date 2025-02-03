@@ -27,6 +27,7 @@ import GenerativeMenuSwitch from "./generative/generative-menu-switch";
 import { uploadFn } from "./image-upload";
 import { TextButtons } from "./selectors/text-buttons";
 import { slashCommand, suggestionItems } from "./slash-command";
+import axios from "axios";
 
 const hljs = require("highlight.js");
 
@@ -41,6 +42,9 @@ const TailwindAdvancedEditor = () => {
   const [openColor, setOpenColor] = useState(false);
   const [openLink, setOpenLink] = useState(false);
   const [openAI, setOpenAI] = useState(false);
+
+
+
 
   //Apply Codeblock Highlighting on the HTML from editor.getHTML()
   const highlightCodeblocks = (content: string) => {
@@ -58,6 +62,20 @@ const TailwindAdvancedEditor = () => {
     console.log('====================================');
     // console.log(json.content);
     console.log(JSON.stringify(json));
+
+    try {
+      await fetch("/api/documents/cm6pewxt10000miy4lxwohc5z", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(json),
+      });
+    } catch (error) {
+
+    }
+
+
     console.log('====================================');
     setCharsCount(editor.storage.characterCount.words());
     window.localStorage.setItem("html-content", highlightCodeblocks(editor.getHTML()));
@@ -70,9 +88,28 @@ const TailwindAdvancedEditor = () => {
   }, 500);
 
   useEffect(() => {
-    const content = window.localStorage.getItem("novel-content");
-    if (content) setInitialContent(JSON.parse(content));
-    else setInitialContent(defaultEditorContent);
+
+    async function xa() {
+      try {
+        const res: any = await axios.get("/api/documents/cm6pewxt10000miy4lxwohc5z");
+        console.log(res.data.content);
+        const content = JSON.parse(res.data.content);
+        setInitialContent(content);
+
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    console.log("468468468468468468468468");
+    xa();
+
+    // const content = window.localStorage.getItem("novel-content");
+
+
+
+    // if (content) setInitialContent(JSON.parse(content));
+    // else setInitialContent(defaultEditorContent);
   }, []);
 
   if (!initialContent) return null;
@@ -113,7 +150,7 @@ const TailwindAdvancedEditor = () => {
               {suggestionItems.map((item) => (
                 <EditorCommandItem
                   value={item.title}
-                  onCommand={(val) => item.command(val)}
+                  onCommand={(val) => item.command && item.command(val)}
                   className="flex w-full items-center space-x-2 rounded-md px-2 py-1 text-left text-sm hover:bg-accent aria-selected:bg-accent"
                   key={item.title}
                 >

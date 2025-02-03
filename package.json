@@ -13,6 +13,7 @@
   "dependencies": {
     "@ai-sdk/openai": "^1.1.0",
     "@premieroctet/next-crud": "^4.0.1",
+    "@prisma/client": "6.3.0",
     "@radix-ui/react-dialog": "^1.0.5",
     "@radix-ui/react-popover": "^1.0.7",
     "@radix-ui/react-scroll-area": "^1.0.5",
@@ -26,6 +27,7 @@
     "@vercel/kv": "^1.0.1",
     "ai": "^3.0.12",
     "autoprefixer": "^10.4.17",
+    "axios": "^1.7.9",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "cmdk": "^1.0.4",
