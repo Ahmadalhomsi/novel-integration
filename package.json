@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@ai-sdk/openai": "^1.1.0",
+    "@premieroctet/next-crud": "^4.0.1",
     "@radix-ui/react-dialog": "^1.0.5",
     "@radix-ui/react-popover": "^1.0.7",
     "@radix-ui/react-scroll-area": "^1.0.5",
@@ -36,6 +37,7 @@
     "next-themes": "^0.2.1",
     "novel": "1.0.0",
     "openai": "^4.28.4",
+    "prisma": "^6.3.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-markdown": "^9.0.1",
