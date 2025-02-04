@@ -35,7 +35,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
         const data = await req.json();
         const str = JSON.stringify(data);
 
-        console.log(str);
+        // console.log(str);
 
         const updatedDocument = await prisma.document.update({
             where: { id },
