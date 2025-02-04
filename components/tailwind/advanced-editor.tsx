@@ -22,7 +22,6 @@ import { LinkSelector } from "./selectors/link-selector";
 import { MathSelector } from "./selectors/math-selector";
 import { NodeSelector } from "./selectors/node-selector";
 import { Separator } from "./ui/separator";
-
 import GenerativeMenuSwitch from "./generative/generative-menu-switch";
 import { uploadFn } from "./image-upload";
 import { TextButtons } from "./selectors/text-buttons";
@@ -43,15 +42,10 @@ const TailwindAdvancedEditor = () => {
   const [openLink, setOpenLink] = useState(false);
   const [openAI, setOpenAI] = useState(false);
 
-
-
-
-  //Apply Codeblock Highlighting on the HTML from editor.getHTML()
+  // Apply Codeblock Highlighting on the HTML from editor.getHTML()
   const highlightCodeblocks = (content: string) => {
     const doc = new DOMParser().parseFromString(content, "text/html");
     doc.querySelectorAll("pre code").forEach((el) => {
-      // @ts-ignore
-      // https://highlightjs.readthedocs.io/en/latest/api.html?highlight=highlightElement#highlightelement
       hljs.highlightElement(el);
     });
     return new XMLSerializer().serializeToString(doc);
@@ -59,10 +53,7 @@ const TailwindAdvancedEditor = () => {
 
   const debouncedUpdates = useDebouncedCallback(async (editor: EditorInstance) => {
     const json = editor.getJSON();
-    console.log('====================================');
-    // console.log(json.content);
-    console.log(JSON.stringify(json));
-
+    
     try {
       await fetch("/api/documents/cm6pewxt10000miy4lxwohc5z", {
         method: "PUT",
@@ -71,45 +62,27 @@ const TailwindAdvancedEditor = () => {
         },
         body: JSON.stringify(json),
       });
+      setSaveStatus("Saved");
     } catch (error) {
-
+      setSaveStatus("Error saving");
     }
 
-
-    console.log('====================================');
     setCharsCount(editor.storage.characterCount.words());
-    window.localStorage.setItem("html-content", highlightCodeblocks(editor.getHTML()));
-    window.localStorage.setItem("novel-content", JSON.stringify(json));
-    window.localStorage.setItem("markdown", editor.storage.markdown.getMarkdown());
-    console.log('====================================');
-    console.log(editor.storage);
-    console.log('====================================');
-    setSaveStatus("Saved");
   }, 500);
 
   useEffect(() => {
-
-    async function xa() {
+    async function fetchInitialContent() {
       try {
-        const res: any = await axios.get("/api/documents/cm6pewxt10000miy4lxwohc5z");
-        console.log(res.data.content);
+        const res = await axios.get("/api/documents/cm6pewxt10000miy4lxwohc5z");
         const content = JSON.parse(res.data.content);
         setInitialContent(content);
-
       } catch (error) {
-        console.log(error);
+        console.error("Error fetching content:", error);
+        setInitialContent(defaultEditorContent);
       }
     }
 
-    console.log("468468468468468468468468");
-    xa();
-
-    // const content = window.localStorage.getItem("novel-content");
-
-
-
-    // if (content) setInitialContent(JSON.parse(content));
-    // else setInitialContent(defaultEditorContent);
+    fetchInitialContent();
   }, []);
 
   if (!initialContent) return null;
@@ -117,7 +90,9 @@ const TailwindAdvancedEditor = () => {
   return (
     <div className="relative w-full max-w-screen-lg">
       <div className="flex absolute right-5 top-5 z-10 mb-5 gap-2">
-        <div className="rounded-lg bg-accent px-2 py-1 text-sm text-muted-foreground">{saveStatus}</div>
+        <div className="rounded-lg bg-accent px-2 py-1 text-sm text-muted-foreground">
+          {saveStatus}
+        </div>
         <div className={charsCount ? "rounded-lg bg-accent px-2 py-1 text-sm text-muted-foreground" : "hidden"}>
           {charsCount} Words
         </div>
@@ -134,8 +109,7 @@ const TailwindAdvancedEditor = () => {
             handlePaste: (view, event) => handleImagePaste(view, event, uploadFn),
             handleDrop: (view, event, _slice, moved) => handleImageDrop(view, event, moved, uploadFn),
             attributes: {
-              class:
-                "prose prose-lg dark:prose-invert prose-headings:font-title font-default focus:outline-none max-w-full",
+              class: "prose prose-lg dark:prose-invert prose-headings:font-title font-default focus:outline-none max-w-full",
             },
           }}
           onUpdate={({ editor }) => {
@@ -145,7 +119,9 @@ const TailwindAdvancedEditor = () => {
           slotAfter={<ImageResizer />}
         >
           <EditorCommand className="z-50 h-auto max-h-[330px] overflow-y-auto rounded-md border border-muted bg-background px-1 py-2 shadow-md transition-all">
-            <EditorCommandEmpty className="px-2 text-muted-foreground">No results</EditorCommandEmpty>
+            <EditorCommandEmpty className="px-2 text-muted-foreground">
+              No results
+            </EditorCommandEmpty>
             <EditorCommandList>
               {suggestionItems.map((item) => (
                 <EditorCommandItem
@@ -170,7 +146,6 @@ const TailwindAdvancedEditor = () => {
             <Separator orientation="vertical" />
             <NodeSelector open={openNode} onOpenChange={setOpenNode} />
             <Separator orientation="vertical" />
-
             <LinkSelector open={openLink} onOpenChange={setOpenLink} />
             <Separator orientation="vertical" />
             <MathSelector />
